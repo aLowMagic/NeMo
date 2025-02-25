@@ -22,6 +22,7 @@ from lightning.pytorch.callbacks.callback import Callback
 from megatron.core.distributed import DistributedDataParallelConfig
 
 from nemo import lightning as nl
+from nemo.collections.common.tokenizers.huggingface import AutoTokenizer
 from nemo.collections.llm.api import finetune, pretrain
 from nemo.collections.llm.gpt.data.mock import MockDataModule
 from nemo.collections.llm.gpt.data.packed_sequence import PackedSequenceSpecs
@@ -197,7 +198,7 @@ def pretrain_recipe(
         optim=distributed_fused_adam_with_cosine_annealing(max_lr=3e-4),
         resume=default_resume(),
     )
-
+    recipe.data.tokenizer=run.Config(AutoTokenizer, "meta-llama/Llama-3.1-8B", use_fast=True,)
     if performance_mode:
         recipe = pretrain_performance_optimizations(recipe)
 
